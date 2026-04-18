@@ -1,0 +1,7 @@
+{
+  "/[...slug]/page": "app/[...slug]/page.js",
+  "/page": "app/page.js",
+  "/ramada1/page": "app/ramada1/page.js",
+  "/ramada2/page": "app/ramada2/page.js",
+  "/ramada7/page": "app/ramada7/page.js"
+}

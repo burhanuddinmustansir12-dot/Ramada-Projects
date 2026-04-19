@@ -5,7 +5,9 @@ import RamadaLayout from '@/components/RamadaLayout';
 
 export default function Ramada4Page() {
   const [topic, setTopic] = useState('ramada4');
-  const [info, setInfo] = useState('Space to add info');
+  const [title, setTitle] = useState('Birthday Party');
+  const [time, setTime] = useState('3:00 PM - 8:00 PM');
+  const [venue, setVenue] = useState('Party Room B');
 
   useEffect(() => {
     const savedTopics = localStorage.getItem('ramadaTopics');
@@ -16,11 +18,13 @@ export default function Ramada4Page() {
       }
     }
     
-    const savedInfos = localStorage.getItem('ramadaInfos');
-    if (savedInfos) {
-      const infos = JSON.parse(savedInfos);
-      if (infos[4]) {
-        setInfo(infos[4]);
+    const savedEventDetails = localStorage.getItem('ramadaEventDetails');
+    if (savedEventDetails) {
+      const details = JSON.parse(savedEventDetails);
+      if (details[4]) {
+        setTitle(details[4].title || 'Birthday Party');
+        setTime(details[4].time || '3:00 PM - 8:00 PM');
+        setVenue(details[4].venue || 'Party Room B');
       }
     }
   }, []);
@@ -33,20 +37,43 @@ export default function Ramada4Page() {
     localStorage.setItem('ramadaTopics', JSON.stringify(topics));
   };
 
-  const handleInfoChange = (newInfo: string) => {
-    setInfo(newInfo);
-    const savedInfos = localStorage.getItem('ramadaInfos');
-    const infos = savedInfos ? JSON.parse(savedInfos) : {};
-    infos[4] = newInfo;
-    localStorage.setItem('ramadaInfos', JSON.stringify(infos));
+  const handleTitleChange = (newTitle: string) => {
+    setTitle(newTitle);
+    const savedEventDetails = localStorage.getItem('ramadaEventDetails');
+    const details = savedEventDetails ? JSON.parse(savedEventDetails) : {};
+    if (!details[4]) details[4] = {};
+    details[4].title = newTitle;
+    localStorage.setItem('ramadaEventDetails', JSON.stringify(details));
+  };
+
+  const handleTimeChange = (newTime: string) => {
+    setTime(newTime);
+    const savedEventDetails = localStorage.getItem('ramadaEventDetails');
+    const details = savedEventDetails ? JSON.parse(savedEventDetails) : {};
+    if (!details[4]) details[4] = {};
+    details[4].time = newTime;
+    localStorage.setItem('ramadaEventDetails', JSON.stringify(details));
+  };
+
+  const handleVenueChange = (newVenue: string) => {
+    setVenue(newVenue);
+    const savedEventDetails = localStorage.getItem('ramadaEventDetails');
+    const details = savedEventDetails ? JSON.parse(savedEventDetails) : {};
+    if (!details[4]) details[4] = {};
+    details[4].venue = newVenue;
+    localStorage.setItem('ramadaEventDetails', JSON.stringify(details));
   };
 
   return (
     <RamadaLayout 
       topic={topic} 
-      info={info}
+      title={title}
+      time={time}
+      venue={venue}
       onTopicChange={handleTopicChange}
-      onInfoChange={handleInfoChange}
+      onTitleChange={handleTitleChange}
+      onTimeChange={handleTimeChange}
+      onVenueChange={handleVenueChange}
       isEditable={true}
     />
   );

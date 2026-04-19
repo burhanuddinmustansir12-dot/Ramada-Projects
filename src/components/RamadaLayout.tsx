@@ -4,22 +4,32 @@ import React, { useState, useEffect } from 'react';
 
 interface RamadaLayoutProps {
   topic: string;
-  info: string;
+  title: string;
+  time: string;
+  venue: string;
   isEditable?: boolean;
   onTopicChange?: (topic: string) => void;
-  onInfoChange?: (info: string) => void;
+  onTitleChange?: (title: string) => void;
+  onTimeChange?: (time: string) => void;
+  onVenueChange?: (venue: string) => void;
 }
 
 export default function RamadaLayout({ 
   topic, 
-  info, 
+  title = 'Event Title', 
+  time = 'Event Time', 
+  venue = 'Event Venue', 
   isEditable = false, 
   onTopicChange, 
-  onInfoChange 
+  onTitleChange, 
+  onTimeChange, 
+  onVenueChange 
 }: RamadaLayoutProps) {
   // State for editing
   const [currentTopic, setCurrentTopic] = useState(topic);
-  const [currentInfo, setCurrentInfo] = useState(info);
+  const [currentTitle, setCurrentTitle] = useState(title);
+  const [currentTime, setCurrentTime] = useState(time);
+  const [currentVenue, setCurrentVenue] = useState(venue);
   const [isEditing, setIsEditing] = useState(false);
 
   // Image slider states
@@ -53,8 +63,10 @@ export default function RamadaLayout({
   // Sync props with state
   useEffect(() => {
     setCurrentTopic(topic);
-    setCurrentInfo(info);
-  }, [topic, info]);
+    setCurrentTitle(title);
+    setCurrentTime(time);
+    setCurrentVenue(venue);
+  }, [topic, title, time, venue]);
 
   // Global paste handler for image sliders
   useEffect(() => {
@@ -91,7 +103,7 @@ export default function RamadaLayout({
         document.removeEventListener('paste', handleGlobalPaste);
       };
     }
-  }, [editingSlider, slider1Index, slider2Index, slider3Index]);
+  }, [editingSlider, slider1Index, slider2Index, slider3Index, setSliderImages]);
 
   // Image handling functions
   const handleImageUpload = (sliderIndex: number, imageIndex: number, file: File | string) => {
@@ -201,7 +213,19 @@ export default function RamadaLayout({
 
   return (
     <>
-      <div className="min-h-screen bg-white p-8 pb-28">
+      {/* RED NEWS BAR */}
+      <div className="fixed top-0 left-0 right-0 bg-red-600 text-white py-3 z-50 overflow-hidden">
+        <div className="relative h-8 flex items-center">
+          <div className="absolute whitespace-nowrap animate-scroll-text">
+            <span className="text-lg font-bold">
+              Ramada Plaza-Karachi By Wyndham-Live Events &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              Ramada Plaza-Karachi By Wyndham-Live Events &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="min-h-screen bg-white p-8 pb-28 pt-20">
         
         {/* MAIN CONTENT */}
         <div className="flex gap-8">
@@ -296,24 +320,46 @@ export default function RamadaLayout({
           <div className="flex-1 bg-blue-500 rounded-2xl p-8 text-white text-center relative max-w-full overflow-hidden">
             
             {isEditable && isEditing ? (
-              <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-col items-center gap-4 mt-8">
                 <input
                   value={currentTopic}
-                  onChange={(e) => setCurrentTopic(e.target.value)}
-                  className="px-4 py-2 rounded text-black text-center font-bold text-xl"
+                  onChange={(e) => {
+                    setCurrentTopic(e.target.value);
+                    onTopicChange?.(e.target.value);
+                  }}
+                  className="px-4 py-2 rounded text-black text-center font-bold text-lg"
+                  placeholder="Topic"
                 />
-                <textarea
-                  value={currentInfo}
-                  onChange={(e) => setCurrentInfo(e.target.value)}
+                <input
+                  value={currentTitle}
+                  onChange={(e) => {
+                    setCurrentTitle(e.target.value);
+                    onTitleChange?.(e.target.value);
+                  }}
                   className="px-4 py-2 rounded text-black text-center w-full max-w-md"
-                  rows={3}
-                  placeholder="Add your info here..."
+                  placeholder="Event Title"
+                />
+                <input
+                  value={currentTime}
+                  onChange={(e) => {
+                    setCurrentTime(e.target.value);
+                    onTimeChange?.(e.target.value);
+                  }}
+                  className="px-4 py-2 rounded text-black text-center w-full max-w-md"
+                  placeholder="Event Time"
+                />
+                <input
+                  value={currentVenue}
+                  onChange={(e) => {
+                    setCurrentVenue(e.target.value);
+                    onVenueChange?.(e.target.value);
+                  }}
+                  className="px-4 py-2 rounded text-black text-center w-full max-w-md"
+                  placeholder="Event Venue"
                 />
                 <button
                   onClick={() => {
                     setIsEditing(false);
-                    onTopicChange?.(currentTopic);
-                    onInfoChange?.(currentInfo);
                   }}
                   className="px-4 py-1 bg-green-600 rounded"
                 >
@@ -321,12 +367,30 @@ export default function RamadaLayout({
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col h-full justify-between">
-                <h1 className="text-3xl font-bold">{currentTopic}</h1>
-                <div className="flex-1 flex items-center justify-center min-h-0">
-                  <p className="text-white break-words overflow-wrap-anywhere max-w-full text-center px-2">
-                    {currentInfo}
-                  </p>
+              <div className="flex flex-col h-full justify-between mt-8 space-y-6">
+                <h1 className="text-2xl font-bold">{currentTopic}</h1>
+                
+                <div className="flex-1 flex flex-col justify-center space-y-8">
+                  <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                    <h3 className="text-lg font-semibold mb-2">Title</h3>
+                    <p className="text-white break-words overflow-wrap-anywhere text-center px-2">
+                      {currentTitle}
+                    </p>
+                  </div>
+                  
+                  <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                    <h3 className="text-lg font-semibold mb-2">Time</h3>
+                    <p className="text-white break-words overflow-wrap-anywhere text-center px-2">
+                      {currentTime}
+                    </p>
+                  </div>
+                  
+                  <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                    <h3 className="text-lg font-semibold mb-2">Venue</h3>
+                    <p className="text-white break-words overflow-wrap-anywhere text-center px-2">
+                      {currentVenue}
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
@@ -341,7 +405,7 @@ export default function RamadaLayout({
             onClick={() => setIsEditing(true)}
             className="px-6 py-3 bg-blue-500 text-white rounded-full hover:bg-blue-600"
           >
-            Edit Title and Info
+            Edit Event Details
           </button>
         </div>
       )}

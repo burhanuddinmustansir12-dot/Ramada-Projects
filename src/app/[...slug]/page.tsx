@@ -9,7 +9,9 @@ export default function DynamicRamadaPage() {
   const slug = Array.isArray(params.slug) ? params.slug.join('/') : params.slug;
   
   const [topic, setTopic] = useState(slug || 'ramada');
-  const [info, setInfo] = useState('Space to add info');
+  const [title, setTitle] = useState('Event Title');
+  const [time, setTime] = useState('Event Time');
+  const [venue, setVenue] = useState('Event Venue');
 
   useEffect(() => {
     // Generate a consistent ID based on the slug
@@ -34,12 +36,14 @@ export default function DynamicRamadaPage() {
       }
     }
     
-    // Load saved infos from localStorage
-    const savedInfos = localStorage.getItem('ramadaInfos');
-    if (savedInfos) {
-      const infos = JSON.parse(savedInfos);
-      if (infos[pageId]) {
-        setInfo(infos[pageId]);
+    // Load saved event details from localStorage
+    const savedEventDetails = localStorage.getItem('ramadaEventDetails');
+    if (savedEventDetails) {
+      const details = JSON.parse(savedEventDetails);
+      if (details[pageId]) {
+        setTitle(details[pageId].title || 'Event Title');
+        setTime(details[pageId].time || 'Event Time');
+        setVenue(details[pageId].venue || 'Event Venue');
       }
     }
   }, [slug]);
@@ -66,8 +70,8 @@ export default function DynamicRamadaPage() {
     localStorage.setItem('ramadaTopics', JSON.stringify(topics));
   };
 
-  const handleInfoChange = (newInfo: string) => {
-    setInfo(newInfo);
+  const handleTitleChange = (newTitle: string) => {
+    setTitle(newTitle);
     
     // Generate a consistent ID based on the slug
     const generateId = (slug: string) => {
@@ -82,18 +86,69 @@ export default function DynamicRamadaPage() {
 
     const pageId = generateId(slug || 'ramada');
     
-    const savedInfos = localStorage.getItem('ramadaInfos');
-    const infos = savedInfos ? JSON.parse(savedInfos) : {};
-    infos[pageId] = newInfo;
-    localStorage.setItem('ramadaInfos', JSON.stringify(infos));
+    const savedEventDetails = localStorage.getItem('ramadaEventDetails');
+    const details = savedEventDetails ? JSON.parse(savedEventDetails) : {};
+    if (!details[pageId]) details[pageId] = {};
+    details[pageId].title = newTitle;
+    localStorage.setItem('ramadaEventDetails', JSON.stringify(details));
+  };
+
+  const handleTimeChange = (newTime: string) => {
+    setTime(newTime);
+    
+    // Generate a consistent ID based on the slug
+    const generateId = (slug: string) => {
+      let hash = 0;
+      for (let i = 0; i < slug.length; i++) {
+        const char = slug.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      return Math.abs(hash) + 1000;
+    };
+
+    const pageId = generateId(slug || 'ramada');
+    
+    const savedEventDetails = localStorage.getItem('ramadaEventDetails');
+    const details = savedEventDetails ? JSON.parse(savedEventDetails) : {};
+    if (!details[pageId]) details[pageId] = {};
+    details[pageId].time = newTime;
+    localStorage.setItem('ramadaEventDetails', JSON.stringify(details));
+  };
+
+  const handleVenueChange = (newVenue: string) => {
+    setVenue(newVenue);
+    
+    // Generate a consistent ID based on the slug
+    const generateId = (slug: string) => {
+      let hash = 0;
+      for (let i = 0; i < slug.length; i++) {
+        const char = slug.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      return Math.abs(hash) + 1000;
+    };
+
+    const pageId = generateId(slug || 'ramada');
+    
+    const savedEventDetails = localStorage.getItem('ramadaEventDetails');
+    const details = savedEventDetails ? JSON.parse(savedEventDetails) : {};
+    if (!details[pageId]) details[pageId] = {};
+    details[pageId].venue = newVenue;
+    localStorage.setItem('ramadaEventDetails', JSON.stringify(details));
   };
 
   return (
     <RamadaLayout 
       topic={topic} 
-      info={info}
+      title={title}
+      time={time}
+      venue={venue}
       onTopicChange={handleTopicChange}
-      onInfoChange={handleInfoChange}
+      onTitleChange={handleTitleChange}
+      onTimeChange={handleTimeChange}
+      onVenueChange={handleVenueChange}
       isEditable={true}
     />
   );

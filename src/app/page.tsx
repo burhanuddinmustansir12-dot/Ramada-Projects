@@ -9,6 +9,12 @@ interface RamadaPage {
   url: string;
 }
 
+interface ContactInfo {
+  email: string;
+  phone: string;
+  address: string;
+}
+
 export default function HomePage() {
   const [ramadaPages, setRamadaPages] = useState<RamadaPage[]>([
     { id: 1, topic: 'ramada1', url: '/ramada1' },
@@ -21,6 +27,11 @@ export default function HomePage() {
   ]);
   const [newPageName, setNewPageName] = useState('');
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
+    email: 'contact@ramadaplaza.com',
+    phone: '+1-234-567-8900',
+    address: '123 Ramada Street, Plaza City, PC 12345'
+  });
 
   useEffect(() => {
     // Load saved topics from localStorage
@@ -40,6 +51,13 @@ export default function HomePage() {
     if (customPages) {
       const pages = JSON.parse(customPages);
       setRamadaPages((prev: RamadaPage[]) => [...prev, ...pages]);
+    }
+    
+    // Load contact info from localStorage
+    const savedContact = localStorage.getItem('ramadaContact');
+    if (savedContact) {
+      const contact = JSON.parse(savedContact);
+      setContactInfo(contact);
     }
   }, []);
 
@@ -188,9 +206,9 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto">
           <h3 className="font-bold text-lg mb-2">RamadaPlaza Contact</h3>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 text-sm">
-            <span> Email: contact@ramadaplaza.com</span>
-            <span> Phone: +1-234-567-8900</span>
-            <span> Address: 123 Ramada Street, Plaza City, PC 12345</span>
+            <span> Email: {contactInfo.email}</span>
+            <span> Phone: {contactInfo.phone}</span>
+            <span> Address: {contactInfo.address}</span>
           </div>
         </div>
       </div>
